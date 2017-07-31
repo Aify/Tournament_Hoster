@@ -174,12 +174,25 @@ public class Tournament {
 	}
 
 	public boolean pickPlayers() {
+		// load any preselected candidates
+		String preselectedCandidates = Util.readFile(tourneyname);
+		String[] PCList = preselectedCandidates.split(",");
+		
+		for (String contestant : PCList) {
+			this.candidates.add(contestant);
+		}
+		
+		// player amount checking
 		if (this.candidates.size() < this.playeramt) {
 			System.out.println("Not enough candidates");
 			return false;
 		}
+		
+		// player picking
+		System.out.print("Picking contestants");
+		
+		// perfect amt of candidates
 		if (this.candidates.size() == this.playeramt) {
-			System.out.print("Picking contestants");
 			for (String c : this.candidates) {
 				this.players.add(new Person(c));
 				System.out.print(".");
@@ -187,7 +200,20 @@ public class Tournament {
 			System.out.println();
 			return true;
 		}
-		System.out.print("Picking contestants");
+		
+		// give priority to preselected candidtes
+		for (String pc : PCList) {
+			// remove the first player in the candidates list, which is always populated by preselected candidates
+			// first
+			this.players.add(new Person((String) this.candidates.remove(0)));
+			
+			if (this.players.size() == this.playeramt) {
+				// all players have been picked
+				return true;
+			}
+		}
+		
+		// not all players have been picked yet, commence random picking
 		while (this.players.size() < this.playeramt) {
 			int randomplayerindex = (int) (Math.random() * this.candidates.size());
 			this.players.add(new Person((String) this.candidates.remove(randomplayerindex)));

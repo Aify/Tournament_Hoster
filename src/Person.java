@@ -8,7 +8,7 @@ public class Person {
 	public boolean fought;
 	public boolean hadbye;
 	public boolean currentbye;
-	
+
 	public Person(String name) {
 		this.name = name;
 		this.fought = false;

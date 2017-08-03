@@ -1,5 +1,6 @@
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class Tournament {
@@ -172,14 +173,17 @@ public class Tournament {
 		}
 		System.out.println("---------------------");
 	}
-
+ 
+	
 	public boolean pickPlayers() {
 		// load any preselected candidates
 		String preselectedCandidates = Util.readFile(tourneyname);
 		String[] PCList = preselectedCandidates.split(",");
 		
-		for (String contestant : PCList) {
-			this.candidates.add(contestant);
+		System.out.println("Preselect List Loaded");
+		
+		for (String pc : PCList) {
+			System.out.println("Candidate: " + pc + " on list.");
 		}
 		
 		// player amount checking
@@ -189,7 +193,7 @@ public class Tournament {
 		}
 		
 		// player picking
-		System.out.print("Picking contestants");
+		System.out.println("Picking contestants");
 		
 		// perfect amt of candidates
 		if (this.candidates.size() == this.playeramt) {
@@ -201,17 +205,40 @@ public class Tournament {
 			return true;
 		}
 		
-		// give priority to preselected candidtes
-		for (String pc : PCList) {
-			// remove the first player in the candidates list, which is always populated by preselected candidates
-			// first
-			this.players.add(new Person((String) this.candidates.remove(0)));
-			
-			if (this.players.size() == this.playeramt) {
-				// all players have been picked
-				return true;
+		System.out.println("Adding preselected Candidates");
+		
+		ArrayList<Integer> preselectedListIndexes = new ArrayList();
+		
+		for (String candidate : this.candidates) {
+			for (String pc : PCList) {
+				if (pc.equalsIgnoreCase(candidate)) {
+					preselectedListIndexes.add(this.candidates.indexOf(candidate));
+					break;
+				}
 			}
 		}
+		
+		Collections.reverse(preselectedListIndexes);
+		for (int ind : preselectedListIndexes) {
+			String player = (String) this.candidates.remove(ind);
+			this.players.add(new Person(player));
+			System.out.println("Added: " + player + " to players list");
+		}
+		
+
+		// give priority to preselected candidtes
+//		for (String pc : PCList) {
+//			// remove the first player in the candidates list, which is always populated by preselected candidates
+//			// first
+//			this.players.add(new Person((String) this.candidates.remove(0)));
+//			
+//			if (this.players.size() == this.playeramt) {
+//				// all players have been picked
+//				return true;
+//			}
+//		}
+		
+		System.out.println("Adding normal players");
 		
 		// not all players have been picked yet, commence random picking
 		while (this.players.size() < this.playeramt) {
